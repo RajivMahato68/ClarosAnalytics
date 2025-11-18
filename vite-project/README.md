@@ -41,7 +41,8 @@ Follow these steps to run the application on your local machine.
 
 2. Install Dependencies
 
-   ```npm install
+   ```
+   npm install
 
    ```
 
