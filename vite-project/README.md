@@ -69,3 +69,12 @@ Follow these steps to run the application on your local machine.
 
 - `npm run dev`: Start the development server
 - `npm run build`: Build the application for production
+
+6. unit test using jest
+
+```
+npm install --save-dev jest @types/jest ts-jest @testing-library/react @testing-library/jest-dom @testing-library/user-event msw whatwg-fetch
+
+```
+
+- `npm run test`: Run unit tests with Jest
