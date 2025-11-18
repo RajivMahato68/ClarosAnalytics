@@ -1,5 +1,5 @@
 import React from "react";
-import { X, Home, Database, Users, Settings } from "lucide-react";
+import { X, Home, Database, Settings } from "lucide-react";
 interface SidebarProps {
   activeRoute: string;
   onNavigate: (route: string) => void;
@@ -16,7 +16,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const navigationItems = [
     { id: "/", label: "Home", icon: Home },
     { id: "/data", label: "Data", icon: Database },
-    { id: "/users", label: "Users", icon: Users },
     { id: "/settings", label: "Settings", icon: Settings },
   ];
 

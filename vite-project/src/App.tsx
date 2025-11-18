@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Sidebar } from "./Components/SideBar";
-import { Header } from "./Components/Header";
-import { Router } from "./Components/Router";
+import { Sidebar } from "./components/SideBar";
+import { Header } from "./components/Header";
+import { Router } from "./components/Router";
 
 const App: React.FC = () => {
   const [currentRoute, setCurrentRoute] = useState<string>("/");
