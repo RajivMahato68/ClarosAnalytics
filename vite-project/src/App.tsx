@@ -1,7 +1,37 @@
-import React from "react";
+import { useState } from "react";
+import { Sidebar } from "./Components/SideBar";
+import { Header } from "./Components/Header";
+import { Router } from "./Components/Router";
 
-const App = () => {
-  return <div className="bg-red-500">App</div>;
+const App: React.FC = () => {
+  const [currentRoute, setCurrentRoute] = useState<string>("/");
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+
+  const handleNavigate = (route: string) => {
+    setCurrentRoute(route);
+  };
+
+  return (
+    <div className="flex h-screen bg-gray-100 overflow-hidden">
+      <Sidebar
+        activeRoute={currentRoute}
+        onNavigate={handleNavigate}
+        isMobileOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+      />
+
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <Header
+          currentRoute={currentRoute}
+          onMenuClick={() => setIsSidebarOpen(true)}
+        />
+
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
+          <Router currentRoute={currentRoute} />
+        </main>
+      </div>
+    </div>
+  );
 };
 
 export default App;
