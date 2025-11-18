@@ -1,57 +1,67 @@
-"use client";
-import React, { useState, useMemo } from "react";
-import { sampleData } from "../Data/SimpleData";
+import React, { useEffect, useState, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "../store/store";
+import { fetchTodos } from "../store/todoSlice";
+import Pagination from "../components/comman/Pagination";
+import type { Todo } from "../store/todoSlice";
 
 export const DataPage: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { data, loading, error } = useSelector(
+    (state: RootState) => state.todos
+  );
+
   const [query, setQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
 
-  //  Filtered Data
+  useEffect(() => {
+    dispatch(fetchTodos());
+  }, [dispatch]);
+
+  // Search
   const filteredData = useMemo(() => {
-    if (!query.trim()) return sampleData;
+    if (!query.trim()) return data;
 
-    return sampleData.filter((item) =>
-      [item.name, item.email]
-        .join(" ")
-        .toLowerCase()
-        .includes(query.toLowerCase())
+    return data.filter((item: Todo) =>
+      item.title.toLowerCase().includes(query.toLowerCase())
     );
-  }, [query]);
+  }, [query, data]);
 
-  //  Pagination Logic
   const totalItems = filteredData.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
+
   const currentData = filteredData.slice(startIndex, startIndex + itemsPerPage);
 
-  const goToNext = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-  };
+  if (loading)
+    return (
+      <p className="text-center text-lg font-medium text-blue-600">
+        Loading...
+      </p>
+    );
 
-  const goToPrev = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
-
-  const goToPage = (page: number) => {
-    if (page >= 1 && page <= totalPages) setCurrentPage(page);
-  };
+  if (error)
+    return (
+      <p className="text-center text-lg font-medium text-red-600">
+        Error: {error}
+      </p>
+    );
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-gray-800 mb-2">
-          Data Management
+          Todo Management
         </h1>
-        <p className="text-gray-600">View and manage all user data</p>
+        <p className="text-gray-600">Fetched via JSONPlaceholder API</p>
       </div>
 
-      {/* Search Box */}
+      {/* Search */}
       <div className="flex justify-end">
         <input
           type="text"
-          placeholder="Search users..."
+          placeholder="Search title..."
           className="px-4 py-2 border rounded-md w-64 focus:ring-2 focus:ring-blue-500"
           value={query}
           onChange={(e) => {
@@ -61,64 +71,42 @@ export const DataPage: React.FC = () => {
         />
       </div>
 
-      {/* Table */}
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                {["ID", "Name", "Email", "Role", "Status", "Join Date"].map(
-                  (head) => (
-                    <th
-                      key={head}
-                      className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                    >
-                      {head}
-                    </th>
-                  )
-                )}
+                {["ID", "Title", "Completed"].map((head) => (
+                  <th
+                    key={head}
+                    className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    {head}
+                  </th>
+                ))}
               </tr>
             </thead>
 
             <tbody className="bg-white divide-y divide-gray-200">
-              {currentData.map((item) => (
+              {currentData.map((item: Todo) => (
                 <tr
                   key={item.id}
                   className="hover:bg-gray-50 transition-colors"
                 >
                   <td className="px-4 py-4 text-sm text-gray-900">{item.id}</td>
                   <td className="px-4 py-4 text-sm font-medium text-gray-900">
-                    {item.name}
+                    {item.title}
                   </td>
-                  <td className="px-4 py-4 text-sm text-gray-600">
-                    {item.email}
-                  </td>
-                  <td className="px-4 py-4 whitespace-nowrap">
+                  <td className="px-4 py-4">
                     <span
                       className={`px-2 py-1 inline-flex text-xs font-semibold rounded-full ${
-                        item.role === "Admin"
-                          ? "bg-purple-100 text-purple-800"
-                          : item.role === "Manager"
-                          ? "bg-blue-100 text-blue-800"
-                          : "bg-gray-100 text-gray-800"
-                      }`}
-                    >
-                      {item.role}
-                    </span>
-                  </td>
-                  <td className="px-4 py-4 whitespace-nowrap">
-                    <span
-                      className={`px-2 py-1 inline-flex text-xs font-semibold rounded-full ${
-                        item.status === "Active"
+                        item.completed
                           ? "bg-green-100 text-green-800"
                           : "bg-red-100 text-red-800"
                       }`}
                     >
-                      {item.status}
+                      {item.completed ? "Completed" : "Pending"}
                     </span>
-                  </td>
-                  <td className="px-4 py-4 text-sm text-gray-600">
-                    {item.joinDate}
                   </td>
                 </tr>
               ))}
@@ -127,40 +115,14 @@ export const DataPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Pagination */}
-      <div className="flex items-center justify-between mt-4">
-        <button
-          onClick={goToPrev}
-          disabled={currentPage === 1}
-          className="px-3 py-1 border rounded-md disabled:opacity-50"
-        >
-          Previous
-        </button>
-
-        <div className="space-x-2">
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-            <button
-              key={page}
-              onClick={() => goToPage(page)}
-              className={`px-3 py-1 border rounded-md ${
-                currentPage === page
-                  ? "bg-blue-600 text-white"
-                  : "hover:bg-gray-100"
-              }`}
-            >
-              {page}
-            </button>
-          ))}
-        </div>
-
-        <button
-          onClick={goToNext}
-          disabled={currentPage === totalPages}
-          className="px-3 py-1 border rounded-md disabled:opacity-50"
-        >
-          Next
-        </button>
-      </div>
+      {/* Pagination Component */}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={(page: number) => {
+          if (page >= 1 && page <= totalPages) setCurrentPage(page);
+        }}
+      />
     </div>
   );
 };
