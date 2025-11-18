@@ -1,6 +1,6 @@
-import { DataPage } from "../pages/DataPage";
-import { HomePage } from "../pages/HomePage";
-import { SettingsPage } from "../pages/SettingsPage";
+import { DataPage } from "../Pages/DataPage";
+import { HomePage } from "../Pages/HomePage";
+import { SettingsPage } from "../Pages/SettingsPage";
 
 export const Router: React.FC<{ currentRoute: string }> = ({
   currentRoute,

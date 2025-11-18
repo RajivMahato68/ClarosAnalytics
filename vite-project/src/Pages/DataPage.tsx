@@ -1,12 +1,11 @@
-import React, { useEffect, useState, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import type { AppDispatch, RootState } from "../store/store";
-import { fetchTodos } from "../store/todoSlice";
-import Pagination from "../components/comman/Pagination";
+import React, { useState, useMemo } from "react";
+import { useSelector } from "react-redux";
+import type { RootState } from "../store/store";
 import type { Todo } from "../store/todoSlice";
+import Pagination from "../Components/comman/Pagination";
 
 export const DataPage: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  // const dispatch = useDispatch<AppDispatch>();
   const { data, loading, error } = useSelector(
     (state: RootState) => state.todos
   );
@@ -15,9 +14,9 @@ export const DataPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  useEffect(() => {
-    dispatch(fetchTodos());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(fetchTodos());
+  // }, [dispatch]);
 
   // Search
   const filteredData = useMemo(() => {

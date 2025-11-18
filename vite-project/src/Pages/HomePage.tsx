@@ -1,12 +1,16 @@
-import React from "react";
-import { useSelector } from "react-redux";
-import type { RootState } from "../store/store";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "../store/store";
+import { fetchTodos } from "../store/todoSlice";
 
 export const HomePage: React.FC = () => {
   const { data, loading, error } = useSelector(
     (state: RootState) => state.todos
   );
-
+  const dispatch = useDispatch<AppDispatch>();
+  useEffect(() => {
+    dispatch(fetchTodos());
+  }, [dispatch]);
   const todos = (data || []) as Array<{ completed: boolean }>;
 
   // Counts from API
